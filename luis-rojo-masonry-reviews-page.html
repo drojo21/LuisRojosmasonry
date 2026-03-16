@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave a Review — Luis Rojo Masonry LLC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #78350f; --accent: #d97706; --accent-light: #f59e0b; --text: #1f2937; --text-light: #6b7280; --bg: #faf7f4; --card: #ffffff; --radius: 12px; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Lato', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 24px 16px; }
+        .container { max-width: 480px; width: 100%; }
+
+        /* Header */
+        .header { text-align: center; margin-bottom: 32px; }
+        .logo-placeholder { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; color: #fff; font-family: 'Oswald', sans-serif; font-size: 1.8rem; font-weight: 700; }
+        .header h1 { font-family: 'Oswald', sans-serif; font-size: 1.6rem; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
+        .header p { color: var(--text-light); margin-top: 4px; font-size: 0.95rem; }
+
+        /* Question */
+        .question { text-align: center; margin-bottom: 24px; }
+        .question h2 { font-family: 'Oswald', sans-serif; font-size: 1.8rem; color: var(--text); }
+        .question p { color: var(--text-light); margin-top: 8px; }
+
+        /* Stars */
+        .stars { display: flex; justify-content: center; gap: 8px; margin-bottom: 32px; }
+        .star { font-size: 2.4rem; cursor: pointer; color: #d1d5db; transition: color 0.15s, transform 0.15s; user-select: none; }
+        .star.active, .star:hover { color: var(--accent); transform: scale(1.15); }
+        .stars:hover .star { color: #d1d5db; }
+        .stars:hover .star:hover, .stars:hover .star:hover ~ .star-reverse { color: var(--accent); }
+        .stars .star:hover ~ .star { color: #d1d5db !important; }
+
+        /* Review buttons */
+        .review-options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+        .review-btn {
+            display: flex; align-items: center; gap: 14px; padding: 18px 20px;
+            background: var(--card); border: 2px solid #e5e7eb; border-radius: var(--radius);
+            cursor: pointer; text-decoration: none; color: var(--text);
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+        }
+        .review-btn:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(217,119,6,0.15); transform: translateY(-2px); color: var(--text); }
+        .review-btn-icon { font-size: 1.8rem; width: 40px; text-align: center; flex-shrink: 0; }
+        .review-btn-text h3 { font-family: 'Oswald', sans-serif; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .review-btn-text p { font-size: 0.85rem; color: var(--text-light); margin-top: 2px; }
+
+        /* Feedback form */
+        .feedback-section { display: none; background: var(--card); border-radius: var(--radius); padding: 28px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 24px; }
+        .feedback-section.active { display: block; }
+        .feedback-section h3 { font-family: 'Oswald', sans-serif; font-size: 1.2rem; margin-bottom: 16px; text-transform: uppercase; color: var(--primary); }
+        .fb-group { margin-bottom: 16px; }
+        .fb-group label { display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-light); }
+        .fb-group input, .fb-group textarea {
+            width: 100%; padding: 12px 14px; border: 2px solid #e5e7eb; border-radius: 8px;
+            font-family: 'Lato', sans-serif; font-size: 1rem; transition: border-color 0.2s;
+        }
+        .fb-group input:focus, .fb-group textarea:focus { outline: none; border-color: var(--accent); }
+        .fb-group textarea { resize: vertical; min-height: 100px; }
+        .fb-stars { display: flex; gap: 6px; }
+        .fb-star { font-size: 1.6rem; cursor: pointer; color: #d1d5db; transition: color 0.15s; }
+        .fb-star.active { color: var(--accent); }
+        .fb-submit { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: background 0.2s; }
+        .fb-submit:hover { background: var(--primary); }
+        .fb-msg { margin-top: 12px; padding: 12px; border-radius: 8px; text-align: center; font-weight: 700; display: none; }
+        .fb-msg.success { display: block; background: #d1fae5; color: #065f46; }
+
+        /* QR area */
+        .qr-section { text-align: center; margin-top: 24px; padding: 24px; background: var(--card); border-radius: var(--radius); }
+        .qr-placeholder { width: 160px; height: 160px; border: 3px dashed #d1d5db; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; color: var(--text-light); font-size: 0.85rem; text-align: center; padding: 12px; }
+        .qr-section p { font-size: 0.85rem; color: var(--text-light); }
+
+        /* Footer */
+        .page-footer { text-align: center; margin-top: 32px; font-size: 0.85rem; color: var(--text-light); }
+        .page-footer a { color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-placeholder">LR</div>
+            <h1>Luis Rojo Masonry LLC</h1>
+            <p>Built Solid. Built to Last.</p>
+        </div>
+
+        <!-- Question -->
+        <div class="question">
+            <h2>How was your experience?</h2>
+            <p>Your feedback helps other homeowners find quality masonry work.</p>
+        </div>
+
+        <!-- Star rating -->
+        <div class="stars" id="stars">
+            <span class="star" data-rating="1">&#9733;</span>
+            <span class="star" data-rating="2">&#9733;</span>
+            <span class="star" data-rating="3">&#9733;</span>
+            <span class="star" data-rating="4">&#9733;</span>
+            <span class="star" data-rating="5">&#9733;</span>
+        </div>
+
+        <!-- Review destination buttons -->
+        <div class="review-options">
+            <a href="#" class="review-btn" id="googleReviewBtn" target="_blank" rel="noopener">
+                <!-- Replace # with your Google review link from GBP dashboard -->
+                <div class="review-btn-icon">G</div>
+                <div class="review-btn-text">
+                    <h3>Review on Google</h3>
+                    <p>Helps us show up in local search results</p>
+                </div>
+            </a>
+            <a href="#" class="review-btn" id="facebookReviewBtn" target="_blank" rel="noopener">
+                <!-- Replace # with your Facebook page review URL -->
+                <div class="review-btn-icon">f</div>
+                <div class="review-btn-text">
+                    <h3>Review on Facebook</h3>
+                    <p>Share your experience with the community</p>
+                </div>
+            </a>
+            <div class="review-btn" id="feedbackToggle">
+                <div class="review-btn-icon">&#9993;</div>
+                <div class="review-btn-text">
+                    <h3>Send Direct Feedback</h3>
+                    <p>Private feedback sent directly to Luis</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Direct feedback form -->
+        <div class="feedback-section" id="feedbackForm">
+            <h3>Share Your Feedback</h3>
+            <div class="fb-group">
+                <label>Your Name</label>
+                <input type="text" id="fbName" placeholder="Full name">
+            </div>
+            <div class="fb-group">
+                <label>Rating</label>
+                <div class="fb-stars" id="fbStars">
+                    <span class="fb-star" data-rating="1">&#9733;</span>
+                    <span class="fb-star" data-rating="2">&#9733;</span>
+                    <span class="fb-star" data-rating="3">&#9733;</span>
+                    <span class="fb-star" data-rating="4">&#9733;</span>
+                    <span class="fb-star" data-rating="5">&#9733;</span>
+                </div>
+            </div>
+            <div class="fb-group">
+                <label>Your Feedback</label>
+                <textarea id="fbComment" placeholder="Tell us about your experience..."></textarea>
+            </div>
+            <button class="fb-submit" id="fbSubmit">Submit Feedback</button>
+            <div class="fb-msg" id="fbMsg"></div>
+        </div>
+
+        <!-- QR Code area -->
+        <div class="qr-section">
+            <div class="qr-placeholder">QR Code<br>Generate at<br>qr-code-generator.com</div>
+            <p>Scan to leave a review — print this on invoices or business cards</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="page-footer">
+            <p>Luis Rojo Masonry LLC — AZ ROC #337881</p>
+            <p><a href="tel:5204817179">(520) 481-7179</a> · <a href="mailto:luisr@luisrojosmasonry.com">luisr@luisrojosmasonry.com</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Top star rating (visual only)
+        const stars = document.querySelectorAll('#stars .star');
+        let selectedRating = 0;
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                selectedRating = parseInt(star.dataset.rating);
+                stars.forEach((s, i) => s.classList.toggle('active', i < selectedRating));
+            });
+        });
+
+        // Feedback form toggle
+        document.getElementById('feedbackToggle').addEventListener('click', () => {
+            document.getElementById('feedbackForm').classList.toggle('active');
+        });
+
+        // Feedback form stars
+        const fbStars = document.querySelectorAll('#fbStars .fb-star');
+        let fbRating = 0;
+        fbStars.forEach(star => {
+            star.addEventListener('click', () => {
+                fbRating = parseInt(star.dataset.rating);
+                fbStars.forEach((s, i) => s.classList.toggle('active', i < fbRating));
+            });
+        });
+
+        // Feedback form submission
+        const GOOGLE_SHEET_URL = 'TBD'; // Same URL as website form
+        document.getElementById('fbSubmit').addEventListener('click', async () => {
+            const data = {
+                name: document.getElementById('fbName').value,
+                rating: fbRating,
+                comment: document.getElementById('fbComment').value,
+                source: 'Reviews Page',
+                service: 'Feedback',
+                timestamp: new Date().toISOString()
+            };
+
+            if (!data.name || !data.comment) {
+                alert('Please fill in your name and feedback.');
+                return;
+            }
+
+            try {
+                if (GOOGLE_SHEET_URL !== 'TBD') {
+                    await fetch(GOOGLE_SHEET_URL, {
+                        method: 'POST', mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                }
+                const msg = document.getElementById('fbMsg');
+                msg.className = 'fb-msg success';
+                msg.textContent = 'Thank you! Your feedback has been sent to Luis.';
+                document.getElementById('fbName').value = '';
+                document.getElementById('fbComment').value = '';
+                fbStars.forEach(s => s.classList.remove('active'));
+                fbRating = 0;
+            } catch (e) {
+                const msg = document.getElementById('fbMsg');
+                msg.className = 'fb-msg success';
+                msg.textContent = 'Thank you! Your feedback has been sent to Luis.';
+            }
+        });
+
+        // Instructions for setting up review links
+        // 1. Google: Go to GBP dashboard → "Ask for reviews" → copy the link → replace # in googleReviewBtn href
+        // 2. Facebook: Go to your FB page → "Reviews" tab → copy the URL → replace # in facebookReviewBtn href
+        // 3. QR Code: Generate a QR code pointing to THIS page's URL at qr-code-generator.com
+    </script>
+</body>
+</html>
