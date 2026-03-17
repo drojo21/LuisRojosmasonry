@@ -127,7 +127,7 @@
                 "name": "Do you offer free estimates?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Yes. Contact us at (520) 481-7179 or use the form on our website to request a free, no-obligation estimate for your project."
+                    "text": "Yes. Contact us at (520) 481-7579 or use the form on our website to request a free, no-obligation estimate for your project."
                 }
             },
             {
@@ -160,7 +160,7 @@
         "email": "luisr@luisrojosmasonry.com",
         "contactPoint": {
             "@type": "ContactPoint",
-            "telephone": "(520) 481-7179",
+            "telephone": "(520) 481-7579",
             "contactType": "Customer Service"
         },
         "address": {
@@ -389,7 +389,7 @@
                     <li><a href="#gallery">Gallery</a></li>
                     <li><a href="#reviews">Reviews</a></li>
                     <li><a href="#contact">Contact</a></li>
-                    <li><a href="tel:5204817579" class="nav-phone">&#9742; (520) 481-7179</a></li>
+                    <li><a href="tel:5204817579" class="nav-phone">&#9742; (520) 481-7579</a></li>
                 </ul>
                 <button class="hamburger" id="hamburger" aria-label="Menu">
                     <span></span><span></span><span></span>
@@ -648,6 +648,11 @@
     </footer>
 
     <script>
+        // ─── CONFIG ──────────────────────────────────────────────────────────────
+        // Paste your Google Apps Script Web App URL here after deploying Code.gs
+        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbx1IDfIDyGMo4sFzUSG8IN2uj8cUJXZjOO1UCnp7bqCIWBIeOhhg0sBO2NofM3fUy7I3Q/exec';
+        // ─────────────────────────────────────────────────────────────────────────
+
         // Sticky nav
         const nav = document.getElementById('nav');
         window.addEventListener('scroll', () => {
@@ -673,49 +678,56 @@
         }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-        // Form submission
-        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbx1IDfIDyGMo4sFzUSG8IN2uj8cUJXZjOO1UCnp7bqCIWBIeOhhg0sBO2NofM3fUy7I3Q/exec'; // Replace with your Apps Script Web App URL
+        // ─── FORM SUBMISSION ─────────────────────────────────────────────────────
         const form = document.getElementById('quoteForm');
         const formMsg = document.getElementById('formMsg');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+
             const btn = form.querySelector('button[type="submit"]');
             btn.textContent = 'Sending...';
             btn.disabled = true;
+            formMsg.className = 'form-msg';
+            formMsg.style.display = 'none';
 
             const data = {
-                name: form.name.value,
-                phone: form.phone.value,
-                email: form.email.value,
-                service: form.service.value,
-                description: form.description.value,
-                timeline: form.timeline.value,
-                source: 'Website',
-                timestamp: new Date().toISOString()
+                name:        form.name.value.trim(),
+                phone:       form.phone.value.trim(),
+                email:       form.email.value.trim(),
+                service:     form.service.value,
+                description: form.description.value.trim(),
+                timeline:    form.timeline.value,
+                source:      'Website',
+                timestamp:   new Date().toISOString()
             };
 
             try {
-                if (GOOGLE_SHEET_URL !== 'https://script.google.com/macros/s/AKfycbx1IDfIDyGMo4sFzUSG8IN2uj8cUJXZjOO1UCnp7bqCIWBIeOhhg0sBO2NofM3fUy7I3Q/exec') {
-                    await fetch(GOOGLE_SHEET_URL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
-                    });
-                }
+                // Always attempt the fetch — no conditional guard blocking it
+                await fetch(GOOGLE_SHEET_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',          // required for cross-origin Apps Script
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                // no-cors means we can't read the response — assume success if no throw
                 formMsg.className = 'form-msg success';
-                formMsg.textContent = 'Thank you! We received your request and will contact you within 24 hours.';
+                formMsg.textContent = '✓ Thank you! We received your request and will contact you within 24 hours.';
+                formMsg.style.display = 'block';
                 form.reset();
+
             } catch (err) {
-                formMsg.className = 'form-msg success';
-                formMsg.textContent = 'Thank you! We received your request and will contact you within 24 hours.';
-                form.reset();
+                console.error('Form submission error:', err);
+                formMsg.className = 'form-msg error';
+                formMsg.textContent = 'Something went wrong. Please call us directly at (520) 481-7579 or email luisr@luisrojosmasonry.com.';
+                formMsg.style.display = 'block';
             }
 
             btn.textContent = 'Send My Request';
             btn.disabled = false;
         });
+        // ─────────────────────────────────────────────────────────────────────────
     </script>
 </body>
 </html>
