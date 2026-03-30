@@ -347,8 +347,9 @@
         .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 0.85rem; }
 
         /* ANIMATIONS */
-        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
-        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        .fade-in { opacity: 1; transform: translateY(0); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-in.animate { opacity: 0; transform: translateY(30px); }
+        .fade-in.animate.visible { opacity: 1; transform: translateY(0); }
 
         /* MOBILE */
         @media (max-width: 768px) {
@@ -741,15 +742,19 @@
         });
 
         // Scroll animations
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        // Only animate if IntersectionObserver is supported
+        if ('IntersectionObserver' in window) {
+            document.querySelectorAll('.fade-in').forEach(el => el.classList.add('animate'));
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.05, rootMargin: '0px 0px 0px 0px' });
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        }
 
         // ─── LIGHTBOX ─────────────────────────────────────────────────────────────
         const galleryItems = Array.from(document.querySelectorAll('.gallery-item[data-src]'));
