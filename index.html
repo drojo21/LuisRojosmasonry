@@ -744,9 +744,6 @@
             link.addEventListener('click', () => navLinks.classList.remove('active'));
         });
 
-        
-        }
-
         // ─── LIGHTBOX ─────────────────────────────────────────────────────────────
         const galleryItems = Array.from(document.querySelectorAll('.gallery-item[data-src]'));
         const lightbox = document.getElementById('lightbox');
@@ -834,4 +831,12 @@
                 console.error('Form submission error:', err);
                 formMsg.className = 'form-msg error';
                 formMsg.textContent = 'Something went wrong. Please call us directly at (520) 481-7579 or email luisr@luisrojosmasonry.com.';
-                f
+                formMsg.style.display = 'block';
+                btn.textContent = 'Send My Request';
+                btn.disabled = false;
+            }
+        });
+        // ──────────────────────────────────────────────────────────────────────────
+    </script>
+</body>
+</html>
