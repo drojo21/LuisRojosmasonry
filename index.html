@@ -803,18 +803,17 @@
             formMsg.className = 'form-msg';
             formMsg.style.display = 'none';
 
-            const data = {
-                name:        form.name.value.trim(),
-                phone:       form.phone.value.trim(),
-                email:       form.email.value.trim(),
-                service:     form.service.value,
-                description: form.description.value.trim(),
-                timeline:    form.timeline.value,
-                source:      'Website',
-                timestamp:   new Date().toISOString()
-            };
-
             try {
+                const data = {
+                    name:        form.elements['name'].value.trim(),
+                    phone:       form.elements['phone'].value.trim(),
+                    email:       form.elements['email'].value.trim(),
+                    service:     form.elements['service'].value,
+                    description: form.elements['description'].value.trim(),
+                    timeline:    form.elements['timeline'].value,
+                    source:      'Website',
+                    timestamp:   new Date().toISOString()
+                };
                 await fetch(GOOGLE_SHEET_URL, {
                     method: 'POST',
                     mode: 'no-cors',
